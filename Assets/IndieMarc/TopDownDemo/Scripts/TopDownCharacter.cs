@@ -93,8 +93,7 @@ namespace IndieMarc.TopDown
                     carry_item.UseItem();*/
 
                 // Get Input for axis
-                string joystick = Player2 ? Manager.Inst.JoystickBName : Manager.Inst.JoystickAName;
-                Debug.Log(joystick); // TODO set up fallback keyboard controls
+                string joystick = Manager.Inst.GetJoystickName(this);
                 float h = Input.GetAxis("Horizontal" + joystick);
                 float v = Input.GetAxis("Vertical" + joystick);
                 move_input = new Vector2(h, v).normalized;

@@ -5,8 +5,10 @@ using IndieMarc.TopDown;
 
 public class Manager
 {
-    public string JoystickAName { get; set; }
-    public string JoystickBName { get; set; }
+    private string JoystickAName { get; set; }
+    private string JoystickBName { get; set; }
+
+    private List<TopDownCharacter> characters = new List<TopDownCharacter>();
 
     private static Manager _inst;
     public static Manager Inst { 
@@ -24,6 +26,25 @@ public class Manager
     public void PerFrameUpdate()
     {
         UpdateInput();
+    }
+
+    public string GetJoystickName(TopDownCharacter character)
+    {
+        // add character to list
+        if (!characters.Contains(character)) characters.Add(character);
+        if (character.Player2)
+        {
+            return JoystickBName;
+        }
+        else
+        {
+            return JoystickAName;
+        }
+    }
+
+    public List<TopDownCharacter> GetCharacters()
+    {
+        return characters;
     }
 
     private void UpdateInput()
