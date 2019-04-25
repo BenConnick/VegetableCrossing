@@ -40,8 +40,8 @@ namespace IndieMarc.TopDown
             mesh_render = GetComponent<MeshRenderer>();
             timer = Random.Range(0f, 0.2f) + 1f;
 
-            if (GetComponent<MeshRenderer>())
-                GetComponent<MeshRenderer>().sortingLayerName = "Perspective";
+            //if (GetComponent<MeshRenderer>())
+                //GetComponent<MeshRenderer>().sortingLayerName = "Perspective";
 
             ParticleSystem particle = GetComponent<ParticleSystem>();
             if (particle) particle_render = particle.GetComponent<Renderer>();
@@ -76,7 +76,7 @@ namespace IndieMarc.TopDown
 
         public int GetSortOrder()
         {
-            return Mathf.RoundToInt((transform.position.y + offset) * 100f) * -1;
+            return transform.GetSortOrder();
         }
 
         public float GetRotateZOffset()
@@ -110,7 +110,7 @@ namespace IndieMarc.TopDown
 
         public void RefreshAutoRotate()
         {
-            Camera cam = TopDownCamera.GetCamera();
+            Camera cam = Camera.main;
             float current_angle = transform.rotation.eulerAngles.z;
             if (!cam.orthographic)
             {

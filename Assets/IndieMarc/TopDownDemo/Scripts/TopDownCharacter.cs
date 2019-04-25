@@ -19,6 +19,7 @@ namespace IndieMarc.TopDown
         public float move_accel = 1f;
         public float move_deccel = 1f;
         public float move_max = 1f;
+        public bool Player2;
 
         [Header("Parts")]
         public GameObject hold_hand;
@@ -77,19 +78,27 @@ namespace IndieMarc.TopDown
         //Handle render and controls
         void Update()
         {
+            Manager.Inst.PerFrameUpdate();
             move_input = Vector2.zero;
 
             //Controls
             if (!disable_controls)
             {
-                //Controls
+                /*//Controls
                 TopDownControls controls = TopDownControls.Get(player_id);
                 if (controls != null) move_input = controls.GetMove();
 
                 //Items
                 take_item_timer += Time.deltaTime;
                 if (carry_item && controls.GetActionDown())
-                    carry_item.UseItem();
+                    carry_item.UseItem();*/
+
+                // Get Input for axis
+                string joystick = Player2 ? Manager.Inst.JoystickBName : Manager.Inst.JoystickAName;
+                Debug.Log(joystick); // TODO set up fallback keyboard controls
+                float h = Input.GetAxis("Horizontal" + joystick);
+                float v = Input.GetAxis("Vertical" + joystick);
+                move_input = new Vector2(h, v).normalized;
             }
 
             //Update lookat side
