@@ -63,10 +63,11 @@ public class Manager
             }
         }
 
+        // fall back to keyboard
         if (JoystickAName == null)
         {
             JoystickAName = "Keyboard1";
-            JoystickbName = "Keyboard2";
+            JoystickBName = "Keyboard2";
         }
     }
 }
