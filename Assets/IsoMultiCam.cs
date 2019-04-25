@@ -32,6 +32,6 @@ public class IsoMultiCam : MonoBehaviour
         Vector3 target = total *= (1f / (float)Manager.Inst.GetCharacters().Count);
         transform.position = target + offset;
         //transform.forward = target - transform.position; maybe want this later
-        self.orthographicSize = Mathf.Clamp(maxDist, 0.5f, 1000f);
+        self.orthographicSize = Mathf.Clamp(maxDist*0.5f, 0.5f, 1000f);
     }
 }
