@@ -78,7 +78,6 @@ namespace IndieMarc.TopDown
         //Handle render and controls
         void Update()
         {
-            Manager.Inst.PerFrameUpdate();
             move_input = Vector2.zero;
 
             //Controls
