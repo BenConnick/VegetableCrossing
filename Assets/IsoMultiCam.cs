@@ -5,6 +5,7 @@ using IndieMarc.TopDown;
 public class IsoMultiCam : MonoBehaviour
 {
     public Vector3 offset;
+    public float smoothing = 10f;
 
     private Camera self;
     private TopDownCharacter[] players;
@@ -18,20 +19,22 @@ public class IsoMultiCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float maxDist = 0f;
-        Vector3 total = Vector3.zero;
+        float maxDist = 0f; // largest distance between two characters
+        Vector3 avg = Vector3.zero; // vector that will represent the midpoint of all characters
         foreach (var character in Manager.Inst.GetCharacters())
         {
-            total += character.transform.position;
+            avg += character.transform.position;
+            // cal
             foreach (var p in Manager.Inst.GetCharacters())
             {
                 float d = (p.transform.position - character.transform.position).magnitude;
                 if (d > maxDist) maxDist = d;
             }
         }
-        Vector3 target = total *= (1f / (float)Manager.Inst.GetCharacters().Count);
-        transform.position = target + offset;
+        Vector3 target = avg *= (1f / ((float)Manager.Inst.GetCharacters().Count + 1.0001f));
+        float lerpAmount = Time.deltaTime / (smoothing + 0.01f);
+        transform.position = Vector3.Lerp(transform.position, target + offset, lerpAmount);
         //transform.forward = target - transform.position; maybe want this later
-        self.orthographicSize = Mathf.Clamp(maxDist*0.5f, 0.5f, 1000f);
+        self.orthographicSize = Mathf.Lerp(self.orthographicSize, Mathf.Clamp(maxDist*0.75f, 0.5f, 1000f), lerpAmount);
     }
 }
