@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IndieMarc.TopDown;
+using XInputDotNetPure;
 
 public class Manager
 {
@@ -60,18 +61,19 @@ public class Manager
             //Iterate over every element
             for (int i = 0; i < temp.Length; ++i)
             {
+                int controllerNum = i + 1;
                 //Check if the string is empty or not
                 if (!string.IsNullOrEmpty(temp[i]))
                 {
                     //Not empty, controller temp[i] is connected
-                    Debug.Log("Controller " + i + " is connected using: " + temp[i]);
+                    Debug.Log("Controller " + controllerNum + " is connected using: " + temp[i]);
                     if (JoystickAName == null)
                     {
-                        JoystickAName = i.ToString();
+                        JoystickAName = controllerNum.ToString();
                     }
                     else
                     {
-                        JoystickBName = i.ToString();
+                        JoystickBName = controllerNum.ToString();
                         break;
                     }
                 }
@@ -79,7 +81,7 @@ public class Manager
                 {
                     //If it is empty, controller i is disconnected
                     //where i indicates the controller number
-                    Debug.Log("Controller: " + i + " is disconnected.");
+                    Debug.Log("Controller: " + controllerNum + " is disconnected.");
                 }
             }
         }
