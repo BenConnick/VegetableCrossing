@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasScaler))]
@@ -8,6 +9,8 @@ public class HUD : MonoBehaviour
     public static HUD Instance { get { return inst; } }
     public UIPrefabData Assets;
     public CanvasScaler CanvasScaler;
+    
+    private readonly List<Tooltip> tooltips = new List<Tooltip>();
 
     private void Awake()
     {
@@ -27,7 +30,18 @@ public class HUD : MonoBehaviour
 
     public static void ShowToast(string message)
     {
+        if (Instance == null) return;
         FloatLabel label = Instantiate(Instance.Assets.FloatLabel, Instance.transform);
         label.SetText(message);
+    }
+
+    public static Tooltip ShowTooltip(string message, Transform worldspaceTarget)
+    {
+        if (Instance == null) return null;
+        Tooltip tooltip = Instantiate(Instance.Assets.Tooltip, Instance.transform);
+        tooltip.worldspaceTarget = worldspaceTarget;
+        tooltip.SetText(message);
+        Instance.tooltips.Add(tooltip);
+        return tooltip;
     }
 }

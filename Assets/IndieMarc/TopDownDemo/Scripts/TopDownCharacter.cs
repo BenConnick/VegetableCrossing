@@ -36,7 +36,6 @@ namespace IndieMarc.TopDown
         private Vector2 lookat = Vector2.zero;
         private float side = 1f;
         private bool disable_controls = false;
-        private float take_item_timer = 0f;
 
         void Awake()
         {
@@ -80,15 +79,6 @@ namespace IndieMarc.TopDown
             //Controls
             if (!disable_controls)
             {
-                /*//Controls
-                TopDownControls controls = TopDownControls.Get(player_id);
-                if (controls != null) move_input = controls.GetMove();
-
-                //Items
-                take_item_timer += Time.deltaTime;
-                if (carry_item && controls.GetActionDown())
-                    carry_item.UseItem();*/
-
                 // Get Input for axis
                 Vector2 movementInput = InputManager.GetDirectional(player_id);
                 move_input = movementInput.normalized;
@@ -103,44 +93,6 @@ namespace IndieMarc.TopDown
             //Anims
             animator.SetFloat("Speed", move.magnitude);
             animator.SetInteger("Side", GetSideAnim());
-            animator.SetBool("Hold", GetHoldingItem() != null);
-        }
-
-        private void LateUpdate()
-        {
-            if (carry_item != null)
-                carry_item.UpdateCarryItem();
-        }
-
-        public void TakeItem(CarryItem item)
-        {
-            if (take_item_timer < 0f)
-                return;
-
-            if (item.CanTake(gameObject))
-            {
-                if (!item.HasBearer())
-                {
-                    //Drop current and take new item
-                    DropItem();
-                    carry_item = item;
-                    item.Take(this);
-                    take_item_timer = -0.2f;
-                }
-            }
-        }
-
-        public void DropItem()
-        {
-            if (carry_item != null)
-                carry_item.Drop();
-            carry_item = null;
-            take_item_timer = -0.2f;
-        }
-
-        public CarryItem GetHoldingItem()
-        {
-            return carry_item;
         }
 
         public void Kill()
@@ -192,19 +144,15 @@ namespace IndieMarc.TopDown
 
         void OnCollisionStay2D(Collision2D coll)
         {
-            if (coll.gameObject.GetComponent<Door>() && carry_item && carry_item.GetComponent<Key>())
-            {
-                carry_item.GetComponent<Key>().TryOpenDoor(coll.gameObject);
-            }
+            
         }
 
         void OnTriggerEnter2D(Collider2D coll)
         {
-            if (coll.gameObject.GetComponent<CarryItem>())
-            {
-                TakeItem(coll.gameObject.GetComponent<CarryItem>());
-            }
+            
         }
+
+        /// --------- STATIC UTILITIES --------------
 
         public static void LockGameplay()
         {

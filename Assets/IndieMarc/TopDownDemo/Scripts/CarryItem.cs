@@ -165,7 +165,7 @@ namespace IndieMarc.TopDown
         public bool CanTake(GameObject taker)
         {
             TopDownCharacter player = taker.GetComponent<TopDownCharacter>();
-            CarryItem current_item = player.GetHoldingItem();
+            CarryItem current_item = null; // player.GetHoldingItem();
             
             if (current_item != null && item_type == current_item.item_type)
                 return false;
@@ -256,7 +256,7 @@ namespace IndieMarc.TopDown
         {
             if (bearer && bearer.GetComponent<TopDownCharacter>())
             {
-                bearer.GetComponent<TopDownCharacter>().DropItem();
+                //bearer.GetComponent<TopDownCharacter>().DropItem();
             }
             destroyed = true;
             collide.enabled = false;

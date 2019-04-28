@@ -11,4 +11,5 @@ public class UIPrefabData : ScriptableObject
     public TextMeshProUGUI PLabel;
     public Button Button;
     public FloatLabel FloatLabel;
+    public Tooltip Tooltip;
 }
