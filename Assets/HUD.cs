@@ -20,8 +20,9 @@ public class HUD : MonoBehaviour
         }
     }
 
-    public static void ShowToast()
+    public static void ShowToast(string message)
     {
-        Instantiate(Instance.Assets.FloatLabel, Instance.transform);
+        FloatLabel label = Instantiate(Instance.Assets.FloatLabel, Instance.transform);
+        label.SetText(message);
     }
 }

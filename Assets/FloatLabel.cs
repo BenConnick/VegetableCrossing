@@ -25,4 +25,10 @@ public class FloatLabel : MonoBehaviour
         transform.localPosition += Time.deltaTime * Speed * Vector3.up;
         if (counter > Lifetime) Destroy(gameObject);
     }
+
+    public void SetText(string text)
+    {
+        label = GetComponent<TextMeshProUGUI>();
+        label.text = text;
+    }
 }

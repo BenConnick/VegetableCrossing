@@ -76,7 +76,7 @@ namespace IndieMarc.TopDown
 
         public int GetSortOrder()
         {
-            return transform.GetSortOrder();
+            return transform.GetSortOrder(offset);
         }
 
         public float GetRotateZOffset()

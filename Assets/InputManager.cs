@@ -38,8 +38,26 @@ public static class InputManager
         {
             int plusone = id + 1;
             return new Vector2 (Input.GetAxis("HorizontalKeyboard" + plusone), Input.GetAxis("VerticalKeyboard" + plusone));
+        }        
+    }
+
+    public static bool InteractionButtonIsPressed(int id)
+    {
+        // check if valid player
+        if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
+
+        // get left joystick input
+        if (playerInputs[id].Found)
+        {
+            // "a" button to interact
+            return playerInputs[id].State.Buttons.A == ButtonState.Pressed;
         }
-        
+        // use keyboard as a fallback
+        else
+        {
+            int plusone = id + 1;
+            return Input.GetButton("ActionKeyboard" + plusone);
+        }
     }
 
     public static void PerFrameUpdate()
@@ -66,6 +84,7 @@ public static class InputManager
                     if (!playerInputs[player].Found)
                     {
                         Debug.Log($"Assigning {(int) testPlayerIndex} to {player}");
+                        HUD.ShowToast($"Player {player+1} connected!");
                         playerInputs[player].Index = testPlayerIndex;
                         playerInputs[player].Found = true;
                         assignedControllers.Add(i);

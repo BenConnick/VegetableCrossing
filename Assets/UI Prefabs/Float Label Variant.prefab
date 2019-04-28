@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80daddad3478ab24fb9b664155efad4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Speed: 50
+  Lifetime: 2
 --- !u!1001 &4492345147504914917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22,7 +24,7 @@ PrefabInstance:
     - target: {fileID: 5179180166559981536, guid: f8fea243299adeb439867f3265f146d8,
         type: 3}
       propertyPath: m_Name
-      value: Float Label
+      value: Float Label Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5610479131742649238, guid: f8fea243299adeb439867f3265f146d8,
         type: 3}
@@ -158,6 +160,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.wordCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964295862366578318, guid: f8fea243299adeb439867f3265f146d8,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 514
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8fea243299adeb439867f3265f146d8, type: 3}
