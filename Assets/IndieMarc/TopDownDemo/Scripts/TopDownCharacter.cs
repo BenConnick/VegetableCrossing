@@ -19,7 +19,6 @@ namespace IndieMarc.TopDown
         public float move_accel = 1f;
         public float move_deccel = 1f;
         public float move_max = 1f;
-        public bool Player2;
 
         [Header("Parts")]
         public GameObject hold_hand;
@@ -39,19 +38,17 @@ namespace IndieMarc.TopDown
         private bool disable_controls = false;
         private float take_item_timer = 0f;
 
-        private static Dictionary<int, TopDownCharacter> character_list = new Dictionary<int, TopDownCharacter>();
-
         void Awake()
         {
-            character_list[player_id] = this;
             rigid = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
             auto_order = GetComponent<AutoOrderLayer>();
+            Manager.GetCharacters().Add(this);
         }
 
         void OnDestroy()
         {
-            character_list.Remove(player_id);
+            Manager.GetCharacters().Remove(this);
         }
 
         void Start()
@@ -93,10 +90,8 @@ namespace IndieMarc.TopDown
                     carry_item.UseItem();*/
 
                 // Get Input for axis
-                string joystick = Manager.Inst.GetJoystickName(this);
-                float h = Input.GetAxis("Horizontal" + joystick);
-                float v = Input.GetAxis("Vertical" + joystick);
-                move_input = new Vector2(h, v).normalized;
+                Vector2 movementInput = InputManager.GetDirectional(player_id);
+                move_input = movementInput.normalized;
             }
 
             //Update lookat side
@@ -227,7 +222,7 @@ namespace IndieMarc.TopDown
         {
             TopDownCharacter nearest = null;
             float min_dist = range;
-            foreach (TopDownCharacter character in character_list.Values)
+            foreach (TopDownCharacter character in Manager.GetCharacters())
             {
                 if (!alive_only || character.IsAlive())
                 {
@@ -244,7 +239,7 @@ namespace IndieMarc.TopDown
 
         public static TopDownCharacter Get(int player_id)
         {
-            foreach (TopDownCharacter character in character_list.Values)
+            foreach (TopDownCharacter character in Manager.GetCharacters())
             {
                 if (character.player_id == player_id)
                 {
@@ -256,9 +251,7 @@ namespace IndieMarc.TopDown
 
         public static TopDownCharacter[] GetAll()
         {
-            TopDownCharacter[] list = new TopDownCharacter[character_list.Count];
-            character_list.Values.CopyTo(list, 0);
-            return list;
+            return Manager.GetCharacters().ToArray();
         }
     }
 }

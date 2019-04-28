@@ -19,6 +19,8 @@ public class XInputTestCS : MonoBehaviour
         // SetVibration should be sent in a slower rate.
         // Set vibration according to triggers
         GamePad.SetVibration(playerIndex, state.Triggers.Left, state.Triggers.Right);
+        GamePad.SetVibration((PlayerIndex)1, state.Triggers.Left, state.Triggers.Right);
+        //GamePad.SetVibration((PlayerIndex)2, state.Triggers.Left, state.Triggers.Right);
     }
 
     // Update is called once per frame
