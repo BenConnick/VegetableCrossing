@@ -8,6 +8,11 @@ public class IsoMultiCam : MonoBehaviour
 
     private Camera self;
 
+    public Camera GetCamera()
+    {
+        return self;
+    }
+
     private void Start()
     {
         self = GetComponent<Camera>();
@@ -15,7 +20,7 @@ public class IsoMultiCam : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         float maxDist = 0f; // largest distance between two characters
         Vector3 midpoint = Vector3.zero; // vector that will represent the midpoint of all characters

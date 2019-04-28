@@ -7,6 +7,7 @@ public static class Manager
 {
     private static List<TopDownCharacter> characters = new List<TopDownCharacter>();
     private static int prevFrame;
+    private static Camera mainCam;
 
     public static void PerFrameUpdate()
     {
@@ -19,5 +20,14 @@ public static class Manager
     public static List<TopDownCharacter> GetCharacters()
     {
         return characters;
+    }
+
+    public static Camera GetMainCamera()
+    {
+        if (mainCam == null)
+        {
+            mainCam = Camera.main;
+        }
+        return mainCam;
     }
 }
