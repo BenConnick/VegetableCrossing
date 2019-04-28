@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db3fe55c09901f4cba17485cc226d1b, type: 3}
+  m_Name: UIPrefabData
+  m_EditorClassIdentifier: 
+  H1Label: {fileID: 5038010939364799788, guid: f086e51a56813a94b9f97ee678f36b29, type: 3}
+  H2Label: {fileID: 3964295862366578318, guid: f8fea243299adeb439867f3265f146d8, type: 3}
+  PLabel: {fileID: 1696707536279054658, guid: 507a7796396424c4585b7a7d0e21473d, type: 3}
+  Button: {fileID: 4892416619931696923, guid: 4531aea92da096746bd9f96676d1d24b, type: 3}
+  FloatLabel: {fileID: 7096930704118950237, guid: bca52ab03b03dcc49a1a2240c023fc84,
+    type: 3}
