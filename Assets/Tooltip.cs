@@ -22,4 +22,9 @@ public class Tooltip : MonoBehaviour
             transform.localPosition = Utils.GetCanvasPostion(worldspaceTarget);
         }
     }
+
+    public void Hide()
+    {
+        HUD.HideTooltip(this);
+    }
 }

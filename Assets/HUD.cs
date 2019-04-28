@@ -44,4 +44,11 @@ public class HUD : MonoBehaviour
         Instance.tooltips.Add(tooltip);
         return tooltip;
     }
+
+    public static void HideTooltip(Tooltip tt)
+    {
+        if (Instance == null) return;
+        Instance.tooltips.Remove(tt);
+        Destroy(tt.gameObject);
+    }
 }

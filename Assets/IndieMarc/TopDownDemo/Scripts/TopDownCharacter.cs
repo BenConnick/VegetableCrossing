@@ -37,6 +37,8 @@ namespace IndieMarc.TopDown
         private float side = 1f;
         private bool disable_controls = false;
 
+        private Tooltip tooltip;
+
         void Awake()
         {
             rigid = GetComponent<Rigidbody2D>();
@@ -82,6 +84,17 @@ namespace IndieMarc.TopDown
                 // Get Input for axis
                 Vector2 movementInput = InputManager.GetDirectional(player_id);
                 move_input = movementInput.normalized;
+
+                // Get Input for button
+                bool pressed = InputManager.InteractionButtonIsPressed(player_id);
+                if (pressed)
+                {
+                    if (tooltip == null) tooltip = HUD.ShowTooltip("Player " + (player_id + 1), transform);
+                }
+                else
+                {
+                    if (tooltip != null) tooltip.Hide();
+                }
             }
 
             //Update lookat side
