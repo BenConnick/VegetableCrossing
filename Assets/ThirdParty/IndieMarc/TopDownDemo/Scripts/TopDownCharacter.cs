@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
@@ -38,6 +36,7 @@ namespace IndieMarc.TopDown
         private bool disable_controls = false;
 
         private Tooltip tooltip;
+        private IInteractionTrigger currentSelection;
 
         void Awake()
         {
@@ -50,11 +49,6 @@ namespace IndieMarc.TopDown
         void OnDestroy()
         {
             Manager.GetCharacters().Remove(this);
-        }
-
-        void Start()
-        {
-
         }
 
         //Handle physics
@@ -86,14 +80,13 @@ namespace IndieMarc.TopDown
                 move_input = movementInput.normalized;
 
                 // Get Input for button
-                bool pressed = InputManager.InteractionButtonIsPressed(player_id);
-                if (pressed)
+                bool released = InputManager.InteractionButtonReleasedThisFrame(player_id);
+                if (released)
                 {
-                    if (tooltip == null) tooltip = HUD.ShowTooltip("Player " + (player_id + 1), transform);
-                }
-                else
-                {
-                    if (tooltip != null) tooltip.Hide();
+                    if (currentSelection != null)
+                    {
+                        DoInteraction();
+                    }
                 }
             }
 
@@ -106,6 +99,12 @@ namespace IndieMarc.TopDown
             //Anims
             animator.SetFloat("Speed", move.magnitude);
             animator.SetInteger("Side", GetSideAnim());
+        }
+
+        private void DoInteraction()
+        {
+            if (currentSelection == null) return;
+            currentSelection.GetInteractAction(player_id)?.Invoke();
         }
 
         public void Kill()
@@ -162,7 +161,41 @@ namespace IndieMarc.TopDown
 
         void OnTriggerEnter2D(Collider2D coll)
         {
-            
+            var plot = coll.GetComponent<IInteractionTrigger>();            
+            if (plot != null && plot.IsInteractable())
+            {
+                EnterInteractable(plot, coll.transform);
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D coll)
+        {
+            var plot = coll.GetComponent<IInteractionTrigger>();
+            if (plot != null)
+            {
+                ExitInteractable(plot);
+            }
+        }
+
+        private void EnterInteractable(IInteractionTrigger trigger, Transform target)
+        {
+            if (trigger == currentSelection || !trigger.IsInteractable()) return;
+            currentSelection = trigger;
+            Tooltip prev = tooltip;
+            tooltip = HUD.ShowTooltip(trigger.GetTooltipText(player_id), target);
+            if (prev != null) prev.Hide();
+        }
+
+        private void ExitInteractable(IInteractionTrigger trigger)
+        {
+            if (currentSelection != trigger) return;
+            if (tooltip != null) tooltip.Hide();
+            currentSelection = null;
+        }
+
+        public FarmPlot.PlantType GetHeldSeed()
+        {
+            return FarmPlot.PlantType.Rabbit;
         }
 
         /// --------- STATIC UTILITIES --------------

@@ -37,9 +37,9 @@ public class HUD : MonoBehaviour
 
     public static Tooltip ShowTooltip(string message, Transform worldspaceTarget)
     {
-        if (Instance == null) return null;
+        if (Instance == null) return null;        
         Tooltip tooltip = Instantiate(Instance.Assets.Tooltip, Instance.transform);
-        tooltip.worldspaceTarget = worldspaceTarget;
+        tooltip.SetTarget(worldspaceTarget);
         tooltip.SetText(message);
         Instance.tooltips.Add(tooltip);
         return tooltip;

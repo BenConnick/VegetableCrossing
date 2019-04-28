@@ -18,3 +18,4 @@ MonoBehaviour:
   Button: {fileID: 4892416619931696923, guid: 4531aea92da096746bd9f96676d1d24b, type: 3}
   FloatLabel: {fileID: 7096930704118950237, guid: bca52ab03b03dcc49a1a2240c023fc84,
     type: 3}
+  Tooltip: {fileID: 7638749137356745432, guid: c28407e834fabad469d2a339bc43f921, type: 3}

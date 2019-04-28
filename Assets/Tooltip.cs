@@ -6,7 +6,16 @@ public class Tooltip : MonoBehaviour
 {
     public Image buttonImage;
     public TextMeshProUGUI label;
-    public Transform worldspaceTarget;
+
+    private Transform worldspaceTarget;
+    private RectTransform RTransform;
+
+    public void SetTarget(Transform wsTarget)
+    {
+        worldspaceTarget = wsTarget;
+        RTransform = (RectTransform)transform;
+        MoveToTarget();
+    }
 
     public void SetText(string message)
     {
@@ -17,9 +26,14 @@ public class Tooltip : MonoBehaviour
     void Update()
     {
         buttonImage.transform.localScale = Vector3.one + Vector3.one * 0.1f * Mathf.Sin(Time.time);
+        MoveToTarget();
+    }
+
+    private void MoveToTarget()
+    {
         if (worldspaceTarget != null)
         {
-            transform.localPosition = Utils.GetCanvasPostion(worldspaceTarget);
+            RTransform.anchoredPosition = Utils.GetCanvasPostion(worldspaceTarget);
         }
     }
 

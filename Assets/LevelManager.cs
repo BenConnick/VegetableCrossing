@@ -15,6 +15,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
         Inst = this;
+        Manager.Init();
         Manager.PerFrameUpdate();
     }
 

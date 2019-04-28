@@ -7,6 +7,7 @@ public static class InputManager
     private struct InputWrapper
     {
         public PlayerIndex Index;
+        public GamePadState Prev;
         public GamePadState State;
         public bool Found;
     }
@@ -24,7 +25,7 @@ public static class InputManager
     public static Vector2 GetDirectional(int id)
     {
         // check if valid player
-        if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
+        ValidityCheck(id);
 
         // get left joystick input
         if (playerInputs[id].Found)
@@ -41,23 +42,58 @@ public static class InputManager
         }        
     }
 
-    public static bool InteractionButtonIsPressed(int id)
+    public static bool InteractionButtonIsHeld(int id)
+    {
+        bool pressed;
+        bool unused;
+        GetInteractionButtonState(id, out pressed, out unused);
+        return pressed;
+    }
+
+    public static bool InteractionButtonReleasedThisFrame(int id)
+    {
+        bool pressed;
+        bool pressedPrev;
+        GetInteractionButtonState(id, out pressed, out pressedPrev);
+        return pressed && !pressedPrev;
+    }
+
+    private static void GetInteractionButtonState(int id, out bool pressed, out bool pressedPrev)
     {
         // check if valid player
-        if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
+        ValidityCheck(id);
 
         // get left joystick input
         if (playerInputs[id].Found)
         {
             // "a" button to interact
-            return playerInputs[id].State.Buttons.A == ButtonState.Pressed;
+            pressed = playerInputs[id].State.Buttons.A == ButtonState.Pressed;
+            pressedPrev = playerInputs[id].Prev.Buttons.A == ButtonState.Pressed;
         }
         // use keyboard as a fallback
         else
         {
             int plusone = id + 1;
-            return Input.GetButton("ActionKeyboard" + plusone);
+            string inputName = "ActionKeyboard" + plusone;
+            pressed = Input.GetButton(inputName);
+            if (Input.GetButtonDown(inputName))
+            {
+                pressedPrev = false;
+            }
+            else if (Input.GetButtonUp(inputName))
+            {
+                pressedPrev = true;
+            }
+            else
+            {
+                pressedPrev = pressed;
+            }
         }
+    }
+
+    private static void ValidityCheck(int id)
+    {
+        if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
     }
 
     public static void PerFrameUpdate()
@@ -84,7 +120,7 @@ public static class InputManager
                     if (!playerInputs[player].Found)
                     {
                         Debug.Log($"Assigning {(int) testPlayerIndex} to {player}");
-                        HUD.ShowToast($"Player {player+1} connected!");
+                        HUD.ShowToast($"{player.ToPlayerName()} connected!");
                         playerInputs[player].Index = testPlayerIndex;
                         playerInputs[player].Found = true;
                         assignedControllers.Add(i);
@@ -96,7 +132,10 @@ public static class InputManager
         for (int player = 0; player < playerInputs.Length; player++)
         {
             if (playerInputs[player].Found)
+            {
+                playerInputs[player].Prev = playerInputs[player].State;
                 playerInputs[player].State = GamePad.GetState(playerInputs[player].Index);
+            }
         }
     }
 }

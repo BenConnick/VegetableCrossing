@@ -1,24 +1,26 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class Utils
 {
+    public const float ONE_OVER_SQRT2 = 0.7071067811f;
+
     public static Vector3 GetCanvasPostion(Transform worldSpaceTransform)
     {
         if (HUD.Instance == null) return Vector3.zero;
-        Vector3 viewportPoint = Camera.main.WorldToViewportPoint(worldSpaceTransform.position);
+        Vector3 screenPoint = Camera.main.WorldToScreenPoint(worldSpaceTransform.position);
 
         var canvasScaler = HUD.Instance.CanvasScaler;
 
-        float xRatio = Screen.width / canvasScaler.referenceResolution.x;
-        float yRatio = Screen.height / canvasScaler.referenceResolution.y;
+        float xRatio = canvasScaler.referenceResolution.x / Screen.width;
+        float yRatio = canvasScaler.referenceResolution.y / Screen.height;
 
-        float ratio = (xRatio < yRatio) ? xRatio : yRatio;
+        float ratio = (xRatio > yRatio) ? xRatio : yRatio;
 
-        return viewportPoint * ratio;
+        return new Vector3(screenPoint.x * ratio - Screen.width * 0.5f * ratio, screenPoint.y * ratio - Screen.height * 0.5f * ratio);
     }
-
-
 }
 
 public static class OrderUtils
@@ -29,7 +31,14 @@ public static class OrderUtils
     }
 
     [MenuItem("Tools/AutoOrder Immediate &o")]
-    public static void OrderAll()
+    public static void OrderAndAlignAll()
+    {
+        AlignAllToGrid();
+        OrderAll();
+        Undo.FlushUndoRecordObjects();
+    }
+
+    private static void OrderAll()
     {
         AutoOrderStatic[] all = Object.FindObjectsOfType<AutoOrderStatic>();
         foreach (var item in all)
@@ -39,6 +48,24 @@ public static class OrderUtils
             item.Start();
             PrefabUtility.RecordPrefabInstancePropertyModifications(spriteRenderer);
         }
-        Undo.FlushUndoRecordObjects();
+        // Undo.FlushUndoRecordObjects(); covered by outer func
     }
+
+    private static void AlignAllToGrid()
+    {
+        AlignToISOGrid[] all = Object.FindObjectsOfType<AlignToISOGrid>();
+        foreach (var item in all)
+        {
+            Undo.RecordObject(item.transform, "Order by y");
+            item.DoAlign();
+        }
+        // Undo.FlushUndoRecordObjects(); covered by outer func
+    }
+}
+
+public interface IInteractionTrigger
+{
+    string GetTooltipText(int playerId);
+    Action GetInteractAction(int playerId);
+    bool IsInteractable();
 }
