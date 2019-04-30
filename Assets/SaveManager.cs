@@ -8,6 +8,8 @@ public static class SaveManager
     private const string FarmPlantsKey = "FarmPlantsKey";
     private const string FarmEndTimesKey = "FarmEndTimesKey";
 
+    private static readonly string[] SaveDataKeys = new[] { FarmsKey, FarmPlantsKey, FarmEndTimesKey };
+
     private static int[] farms;
     private static int[] farmPlants;
     private static DateTime[] farmCooldowns;
@@ -31,6 +33,14 @@ public static class SaveManager
     public static void SetFarmPlant(int id, FarmPlot.PlantType plant)
     {
         farmPlants[id] = (int)plant;
+    }
+
+    public static void ClearSaveData()
+    {
+        foreach (string key in SaveDataKeys)
+        {
+            PlayerPrefs.DeleteKey(key);
+        }
     }
 
     public static void Save()
