@@ -28,7 +28,7 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
 
     void Start()
     {
-        SaveManager.GetFarmState(PlotId);
+        SetState(SaveManager.GetFarmState(PlotId), SaveManager.GetFarmPlant(PlotId));
     }
 
     private void UpdateSprite()

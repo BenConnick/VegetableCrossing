@@ -42,6 +42,12 @@ public static class SaveManager
 
     public static void Load()
     {
+        Debug.Log("Farms:");
+        Debug.Log(PlayerPrefs.GetString(FarmsKey));
+        Debug.Log("Plants:");
+        Debug.Log(PlayerPrefs.GetString(FarmPlantsKey));
+        Debug.Log("Times:");
+        Debug.Log(PlayerPrefs.GetString(FarmEndTimesKey));
         farms = CSVToIntArray(PlayerPrefs.GetString(FarmsKey));
         farmPlants = CSVToIntArray(PlayerPrefs.GetString(FarmPlantsKey));
         farmCooldowns = CSVToDateTimeArray(PlayerPrefs.GetString(FarmEndTimesKey));
@@ -87,9 +93,12 @@ public static class SaveManager
         int leftIndex = 0;
         for (int i = 0; i < csv.Length; i++)
         {
-            if (csv[i] == ',')
+            if (csv[i] == ',' || i == csv.Length - 1)
             {
-                parseFunction(csv.Substring(leftIndex, i), list);
+                if (i == leftIndex) continue;
+                int length = (i == csv.Length - 1) ? csv.Length - leftIndex : i - leftIndex;
+                parseFunction(csv.Substring(leftIndex, length), list);
+                leftIndex = i + 1;
             }
         }
         return CreateFarmArray<T>(list);
