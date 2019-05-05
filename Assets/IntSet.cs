@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 public class IntSet<T> : IEnumerable<T>
 {
-    private readonly List<T> values = new List<T>();
-    private readonly List<bool> isSet = new List<bool>();
+    private readonly List<T> valueList = new List<T>();
+    private readonly List<bool> isSetList = new List<bool>();
 
     public void Add(int index, T entry)
     {
@@ -13,42 +12,44 @@ public class IntSet<T> : IEnumerable<T>
         {
             throw new System.IndexOutOfRangeException($"IntSet exception: (index {index}) You cannot create an entry in an IntSet with an index < 0");
         }
-        if (index >= values.Count)
+        if (index >= valueList.Count)
         {
-            for (int i = 0; i < 1 + index - values.Count; i++)
+            int count = valueList.Count;
+            for (int i = 0; i < 1 + index - count; i++)
             {
-                values.Add(default(T));
-                isSet.Add(false);
+                valueList.Add(default(T));
+                isSetList.Add(false);
             }
         }
-        values[index] = entry;
-        isSet[index] = true;
+        valueList[index] = entry;
+        isSetList[index] = true;
     }
 
     public T Get(int index)
     {
-        if (index < 0 || index >= values.Count) throw new System.IndexOutOfRangeException($"No entry in the set exists for index {index}");
-        return values[index];
+        if (index < 0 || index >= valueList.Count) throw new System.IndexOutOfRangeException($"No entry in the set exists for index {index}");
+        return valueList[index];
     }
 
     public void Remove(int index)
     {
-        if (index < 0 || index >= values.Count) throw new System.IndexOutOfRangeException($"No entry in the set exists for index {index}");
-        values[index] = default(T);
+        if (index < 0 || index >= valueList.Count) throw new System.IndexOutOfRangeException($"No entry in the set exists for index {index}");
+        valueList[index] = default(T);
+        isSetList[index] = false;
     }
 
     public bool IsSet(int index)
     {
         // operator == is undefined for generic T; EqualityComparer solves this
         // "equals default" is the same as unset, so if you are setting default values, this happens
-        return index > 0 && index < values.Count && isSet[index];
+        return index > 0 && index < valueList.Count && isSetList[index];
     }
 
     public int GetNextSet(int startingWith)
     {
-        for (int i = startingWith; i < isSet.Count; i++)
+        for (int i = startingWith+1; i < isSetList.Count; i++)
         {
-            if (isSet[i]) return i;
+            if (isSetList[i]) return i;
         }
         return -1;
     }
