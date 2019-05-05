@@ -1,9 +1,12 @@
-﻿using XInputDotNetPure;
+﻿#if UNITY_WINDOWS
+using XInputDotNetPure;
+#endif
 using UnityEngine;
 using System.Collections.Generic;
 
 public static class InputManager
 {
+#if UNITY_WINDOWS
     private struct InputWrapper
     {
         public PlayerIndex Index;
@@ -21,45 +24,44 @@ public static class InputManager
     };
 
     private static readonly List<int> assignedControllers = new List<int>();
+#endif
 
     public static Vector2 GetDirectional(int id)
     {
+#if UNITY_WINDOWS
         // check if valid player
         ValidityCheck(id);
 
         // get left joystick input
         if (playerInputs[id].Found)
         {
-            // left stick for movement
+            // left sticfor movement
             var l = playerInputs[id].State.ThumbSticks.Left;
             return new Vector2(l.X,l.Y);
         }
+#endif
+
         // use keyboard as a fallback
-        else
-        {
-            int plusone = id + 1;
-            return new Vector2 (Input.GetAxis("HorizontalKeyboard" + plusone), Input.GetAxis("VerticalKeyboard" + plusone));
-        }        
+        int plusone = id + 1;
+        return new Vector2 (Input.GetAxis("HorizontalKeyboard" + plusone), Input.GetAxis("VerticalKeyboard" + plusone));
+       
     }
 
     public static bool InteractionButtonIsHeld(int id)
     {
-        bool pressed;
-        bool unused;
-        GetInteractionButtonState(id, out pressed, out unused);
+        GetInteractionButtonState(id, out bool pressed, out bool unused);
         return pressed;
     }
 
     public static bool InteractionButtonReleasedThisFrame(int id)
     {
-        bool pressed;
-        bool pressedPrev;
-        GetInteractionButtonState(id, out pressed, out pressedPrev);
+        GetInteractionButtonState(id, out bool pressed, out bool pressedPrev);
         return pressed && !pressedPrev;
     }
 
     private static void GetInteractionButtonState(int id, out bool pressed, out bool pressedPrev)
     {
+#if UNITY_WINDOWS
         // check if valid player
         ValidityCheck(id);
 
@@ -69,31 +71,32 @@ public static class InputManager
             // "a" button to interact
             pressed = playerInputs[id].State.Buttons.A == ButtonState.Pressed;
             pressedPrev = playerInputs[id].Prev.Buttons.A == ButtonState.Pressed;
+            return;
         }
+#endif
         // use keyboard as a fallback
+        int plusone = id + 1;
+        string inputName = "ActionKeyboard" + plusone;
+        pressed = Input.GetButton(inputName);
+        if (Input.GetButtonDown(inputName))
+        {
+            pressedPrev = false;
+        }
+        else if (Input.GetButtonUp(inputName))
+        {
+            pressedPrev = true;
+        }
         else
         {
-            int plusone = id + 1;
-            string inputName = "ActionKeyboard" + plusone;
-            pressed = Input.GetButton(inputName);
-            if (Input.GetButtonDown(inputName))
-            {
-                pressedPrev = false;
-            }
-            else if (Input.GetButtonUp(inputName))
-            {
-                pressedPrev = true;
-            }
-            else
-            {
-                pressedPrev = pressed;
-            }
+            pressedPrev = pressed;
         }
     }
 
     private static void ValidityCheck(int id)
     {
+#if UNITY_WINDOWS
         if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
+#endif
     }
 
     public static void PerFrameUpdate()
@@ -104,6 +107,7 @@ public static class InputManager
     /// Assume controllers may have been disconnected
     private static void AssignControllers()
     {
+#if UNITY_WINDOWS
         // see if any controllers are available
         for (int i = 0; i < 4; ++i)
         {
@@ -137,5 +141,6 @@ public static class InputManager
                 playerInputs[player].State = GamePad.GetState(playerInputs[player].Index);
             }
         }
+#endif
     }
 }

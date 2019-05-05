@@ -7,10 +7,8 @@ public class StartScreen : BaseScreen
     // Start is called before the first frame update
     void Awake()
     {
-        if (Time.frameCount == 1) // first frame
-        {
-            ScreenManager.AddStartScreen(this);
-        }
+        ScreenManager.AddStartScreen(this);
+
     }
 
     // Update is called once per frame
