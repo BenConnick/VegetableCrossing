@@ -41,7 +41,6 @@ public static class SaveManager
         {
             PlayerPrefs.DeleteKey(key);
         }
-        Load();
     }
 
     public static void Save()

@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class FarmPlot : MonoBehaviour, IInteractionTrigger
 {
-    public int PlotId;
+    public int Id;
     public FarmSprites Sprites;
     public SpriteRenderer SR;
 
@@ -20,15 +20,15 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
     {
         if (plantToSet.HasValue) plant = plantToSet.Value;
         state = stateToSet;
-        SaveManager.SetFarmState(PlotId, state);
-        SaveManager.SetFarmPlant(PlotId, plant);
+        SaveManager.SetFarmState(Id, state);
+        SaveManager.SetFarmPlant(Id, plant);
         UpdateSprite();
         SaveManager.Save();
     }
 
     void Start()
     {
-        SetState(SaveManager.GetFarmState(PlotId), SaveManager.GetFarmPlant(PlotId));
+        Manager.Register(this);
     }
 
     private void UpdateSprite()

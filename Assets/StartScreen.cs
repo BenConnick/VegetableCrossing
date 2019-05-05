@@ -20,11 +20,13 @@ public class StartScreen : BaseScreen
     public void OnNewGamePressed()
     {
         SaveManager.ClearSaveData();
+        Manager.StartGame();
         ScreenManager.PopScreen();
     }
 
     public void OnContinuePressed()
     {
+        Manager.StartGame();
         ScreenManager.PopScreen();
     }
 
