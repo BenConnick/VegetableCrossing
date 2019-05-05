@@ -13,18 +13,22 @@ public static class ScreenManager
 
     public static void PushScreen<T>() where T : BaseScreen
     {
-        // TODO 
+        T screen = InstantiateScreen<T>();
+        ScreenStack.Add(screen);
+        screen.Canvas.sortingOrder = ScreenStack.Count;
     }
 
     public static void PopScreen()
     {
-        // TODO
+        BaseScreen top = ScreenStack[ScreenStack.Count - 1];
+        ScreenStack.Remove(top);
+        Object.Destroy(top.gameObject);
     }
 
     private static T InstantiateScreen<T>() where T : BaseScreen
     {
         FieldInfo field = typeof(ScreenPrefabData).GetField(typeof(T).Name);
         T prefab = (T)field.GetValue(AssetManager.Inst.ScreenPrefabs);
-        return Object.Instantiate(prefab);
+        return Object.Instantiate(prefab);  
     }
 }
