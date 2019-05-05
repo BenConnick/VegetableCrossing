@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62c618b5d0546e4f8c292761f5c1441, type: 3}
   m_Name: ScreenPrefabData
   m_EditorClassIdentifier: 
-  StartScreen: {fileID: 2290241657865966852, guid: 8ec0e5c931ea1f942ab258c7f7efa995,
+  StartScreen: {fileID: 7798210960229087158, guid: 8ec0e5c931ea1f942ab258c7f7efa995,
     type: 3}
