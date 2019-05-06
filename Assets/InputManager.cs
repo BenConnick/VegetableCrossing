@@ -1,4 +1,4 @@
-﻿#if UNITY_WINDOWS
+﻿#if UNITY_STANDALONE_WIN
 using XInputDotNetPure;
 #endif
 using UnityEngine;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public static class InputManager
 {
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
     private struct InputWrapper
     {
         public PlayerIndex Index;
@@ -28,7 +28,7 @@ public static class InputManager
 
     public static Vector2 GetDirectional(int id)
     {
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
         // check if valid player
         ValidityCheck(id);
 
@@ -61,7 +61,7 @@ public static class InputManager
 
     private static void GetInteractionButtonState(int id, out bool pressed, out bool pressedPrev)
     {
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
         // check if valid player
         ValidityCheck(id);
 
@@ -94,7 +94,7 @@ public static class InputManager
 
     private static void ValidityCheck(int id)
     {
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
         if (id < 0 || id >= playerInputs.Length) throw new System.Exception("Player Index out of range: " + id);
 #endif
     }
@@ -107,7 +107,7 @@ public static class InputManager
     /// Assume controllers may have been disconnected
     private static void AssignControllers()
     {
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
         // see if any controllers are available
         for (int i = 0; i < 4; ++i)
         {

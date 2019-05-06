@@ -1,4 +1,4 @@
-#if UNITY_WINDOWS
+#if UNITY_STANDALONE_WIN
 using UnityEngine;
 using XInputDotNetPure; // Required in C#
 
