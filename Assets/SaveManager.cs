@@ -4,25 +4,85 @@ using UnityEngine;
 
 public static class SaveManager
 {
+    // --- Enum Representing the Player Pref Keys and Associated Data ---
+    public enum Category { Farms, FarmPlants, FarmEndTimes, InventoryItemTypes, InventoryItemQuantities }; // must match
+
+    private static float lastChangeTime = 0;
+
+    // --- Keys ---
+
+    // farm
     private const string FarmsKey = "FarmsKey";
     private const string FarmPlantsKey = "FarmPlantsKey";
     private const string FarmEndTimesKey = "FarmEndTimesKey";
 
-    private static readonly string[] SaveDataKeys = new[] { FarmsKey, FarmPlantsKey, FarmEndTimesKey };
+    // inventory
+    private const string InventoryItemTypesKey = "InventoryItemTypesKey";
+    private const string InventoryItemQuantitiesKey = "InventoryItemQuantitiesKey";
 
+    // PlayerPref keys
+    private static readonly string[] IntDataKeys = new[] { FarmsKey, FarmPlantsKey, InventoryItemTypesKey, InventoryItemQuantitiesKey }; // must match
+    private static readonly string[] DateTimeDataKeys = new[] { FarmEndTimesKey }; // must match
+
+    // --- Memory Representations ---
+
+    // farm stuff
     private static int[] farms;
     private static int[] farmPlants;
     private static DateTime[] farmTimes;
 
+    // player stuff
+    private static int[] inventoryItemTypes;
+    private static int[] inventoryItemQuantities;
+
+    // arrays
+    private static readonly int[] IntDataArrayLengths = new[] { Manager.MAX_FARMS, Manager.MAX_FARMS, InventoryManager.MAX_INV_SLOTS, InventoryManager.MAX_INV_SLOTS }; // must match
+    private static readonly int[][] IntDataArrays = new[] { farms, farmPlants, inventoryItemTypes, inventoryItemQuantities }; // must match
+    private static readonly int[] DateTimeDataArrayLengths = new[] { Manager.MAX_FARMS }; // must match
+    private static readonly DateTime[][] DateTimeDataArrays = new[] { farmTimes }; // must match
+
+    // --- Setters and Getters ---
+
+    private static int[] GetIntArrFromCategory(Category category)
+    {
+        return IntDataArrays[(int)category];
+    }
+    
+    public static int GetInt(Category category, int entry)
+    {
+        int[] arr = GetIntArrFromCategory(category);
+        // bounds check
+        if (entry < 0 || entry >= arr.Length) {
+            Debug.LogError($"SaveManager error: Entry {category}:{entry} not found!");
+            return 0;
+        }
+        // return
+        return arr[entry];
+    }
+
+    public static void SetInt(Category category, int entry, int value)
+    {
+        int[] arr = GetIntArrFromCategory(category);
+        // bounds check
+        if (entry < 0 || entry >= arr.Length)
+        {
+            Debug.LogError($"SaveManager error: Entry {category}:{entry} not found!");
+            return;
+        }
+        // set
+        arr[entry] = value;
+        lastChangeTime = Time.time;
+    }
+
     public static FarmPlot.FarmState GetFarmState(int id)
     {
-        if (id < 0 || id >= farms.Length) return default(FarmPlot.FarmState);
         return (FarmPlot.FarmState)farms[id];
     }
 
     public static void SetFarmState(int id, FarmPlot.FarmState state)
     {
         farms[id] = (int)state;
+        lastChangeTime = Time.time;
     }
 
     public static FarmPlot.PlantType GetFarmPlant(int id)
@@ -33,11 +93,13 @@ public static class SaveManager
     public static void SetFarmPlant(int id, FarmPlot.PlantType plant)
     {
         farmPlants[id] = (int)plant;
+        lastChangeTime = Time.time;
     }
 
     public static void SetFarmDoneTime(int id, DateTime done)
     {
         farmTimes[id] = done;
+        lastChangeTime = Time.time;
     }
 
     public static DateTime GetFarmDoneTime(int id)
@@ -45,33 +107,56 @@ public static class SaveManager
         return farmTimes[id];
     }
 
+    // --- Manager Functions ---
+
+    public static float GetLastChangeTime()
+    {
+        return lastChangeTime;
+    }
+
     public static void ClearSaveData()
     {
-        foreach (string key in SaveDataKeys)
+        foreach (string key in IntDataKeys)
         {
             PlayerPrefs.DeleteKey(key);
         }
+        foreach (string key in DateTimeDataKeys)
+        {
+            PlayerPrefs.DeleteKey(key);
+        }
+        lastChangeTime = Time.time;
     }
 
     public static void Save()
     {
-        PlayerPrefs.SetString(FarmsKey, ArrayToCSV(farms));
-        PlayerPrefs.SetString(FarmPlantsKey, ArrayToCSV(farmPlants));
-        PlayerPrefs.SetString(FarmEndTimesKey, ArrayToCSV(farmTimes));
+        // int
+        for (int i = 0; i < IntDataKeys.Length; i++)
+        {
+            PlayerPrefs.SetString(IntDataKeys[i], ArrayToCSV(IntDataArrays[i]));
+        }
+        // DateTime
+        for (int i = 0; i < DateTimeDataKeys.Length; i++)
+        {
+            PlayerPrefs.SetString(DateTimeDataKeys[i], ArrayToCSV(DateTimeDataArrays[i]));
+        }
     }
 
     public static void Load()
     {
-        Debug.Log("Farms:");
-        Debug.Log(PlayerPrefs.GetString(FarmsKey));
-        Debug.Log("Plants:");
-        Debug.Log(PlayerPrefs.GetString(FarmPlantsKey));
-        Debug.Log("Times:");
-        Debug.Log(PlayerPrefs.GetString(FarmEndTimesKey));
-        farms = CSVToIntArray(PlayerPrefs.GetString(FarmsKey));
-        farmPlants = CSVToIntArray(PlayerPrefs.GetString(FarmPlantsKey));
-        farmTimes = CSVToDateTimeArray(PlayerPrefs.GetString(FarmEndTimesKey));
+        // int
+        for (int i = 0; i < IntDataKeys.Length; i++)
+        {
+            IntDataArrays[i] = CSVToIntArray(PlayerPrefs.GetString(IntDataKeys[i]), IntDataArrayLengths[i]);
+        }
+        // DateTime
+        for (int i = 0; i < DateTimeDataKeys.Length; i++)
+        {
+            DateTimeDataArrays[i] = CSVToDateTimeArray(PlayerPrefs.GetString(DateTimeDataKeys[i]), DateTimeDataArrayLengths[i]);
+        }
+        lastChangeTime = Time.time;
     }
+
+    // --- Utility Functions ---
 
     // int[] to string
     private static string ArrayToCSV(int[] array)
@@ -107,7 +192,7 @@ public static class SaveManager
         listToAdd.Add(DateTime.Parse(toParse));
     }
 
-    private static T[] CSVToTArray<T>(string csv, Action<string, IList<T>> parseFunction)
+    private static T[] CSVToTArray<T>(string csv, Action<string, IList<T>> parseFunction, int maxSize)
     {
         List<T> list = new List<T>();
         int leftIndex = 0;
@@ -121,7 +206,12 @@ public static class SaveManager
                 leftIndex = i + 1;
             }
         }
-        return CreateFarmArray<T>(list);
+        T[] arr = new T[maxSize];
+        for (int i = 0; i < list.Count; i++)
+        {
+            arr[i] = list[i];
+        }
+        return arr;
     }
 
     private static T[] CreateFarmArray<T>(List<T> list)
@@ -134,13 +224,13 @@ public static class SaveManager
         return farmArray;
     }
 
-    private static int[] CSVToIntArray(string csv)
+    private static int[] CSVToIntArray(string csv, int maxSize)
     {
-        return CSVToTArray<int>(csv, ParseInt);
+        return CSVToTArray<int>(csv, ParseInt, maxSize);
     }
 
-    private static DateTime[] CSVToDateTimeArray(string csv)
+    private static DateTime[] CSVToDateTimeArray(string csv, int maxSize)
     {
-        return CSVToTArray<DateTime>(csv, ParseDateTime);
+        return CSVToTArray<DateTime>(csv, ParseDateTime, maxSize);
     }
 }

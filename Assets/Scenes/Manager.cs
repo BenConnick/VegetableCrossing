@@ -56,6 +56,13 @@ public static class Manager
         farmPlots.Set(plot.Id, plot);
     }
 
+    public static void ClearProgressAndBeginNewGame()
+    {
+        SaveManager.ClearSaveData();
+        
+        StartGame();
+    }
+
     public static void StartGame()
     {
         if (started)
@@ -94,3 +101,5 @@ public static class Manager
         }
     }
 }
+
+public enum ItemType { Default, RabbitSeed, Rabbit }

@@ -19,8 +19,7 @@ public class StartScreen : BaseScreen
 
     public void OnNewGamePressed()
     {
-        SaveManager.ClearSaveData();
-        Manager.StartGame();
+        Manager.ClearProgressAndBeginNewGame();
         ScreenManager.PopScreen();
     }
 
