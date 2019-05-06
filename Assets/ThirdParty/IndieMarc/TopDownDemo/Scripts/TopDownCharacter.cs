@@ -104,7 +104,8 @@ namespace IndieMarc.TopDown
         private void DoInteraction()
         {
             if (currentSelection == null) return;
-            currentSelection.GetInteractAction(player_id)?.Invoke();
+            currentSelection.DoInteraction(player_id);
+            StartCoroutine(Utils.ColliderOnOff(GetComponent<Collider2D>()));
         }
 
         public void Kill()

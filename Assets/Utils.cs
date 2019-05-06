@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -20,6 +20,13 @@ public static class Utils
         float ratio = (xRatio > yRatio) ? xRatio : yRatio;
 
         return new Vector3(screenPoint.x * ratio - Screen.width * 0.5f * ratio, screenPoint.y * ratio - Screen.height * 0.5f * ratio);
+    }
+
+    public static IEnumerator ColliderOnOff(Collider2D collider)
+    {
+        collider.enabled = false;
+        yield return null;
+        collider.enabled = true;
     }
 }
 
@@ -66,6 +73,6 @@ public static class OrderUtils
 public interface IInteractionTrigger
 {
     string GetTooltipText(int playerId);
-    Action GetInteractAction(int playerId);
+    void DoInteraction(int playerId);
     bool IsInteractable();
 }

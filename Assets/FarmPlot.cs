@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -24,6 +25,7 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         SaveManager.SetFarmPlant(Id, plant);
         UpdateSprite();
         SaveManager.Save();
+        RetriggerColliders();
     }
 
     void Start()
@@ -59,19 +61,29 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         return ret + playerId.ToPlayerTag();
     }
 
-    public Action GetInteractAction(int playerId)
+    public void DoInteraction(int playerId)
     {
         var chars = Manager.GetCharacters();
         var pc = chars[playerId];
         switch (state)
         {
+            // plant a seed
             case FarmState.Empty:
-                return () => { SetState(FarmState.Seeded, pc.GetHeldSeed()); };
+                SetState(FarmState.Seeded, pc.GetHeldSeed());
+                break;
+            // water the plant
             case FarmState.Seeded:
-                return () => { SetState(FarmState.Sapling); };
+                SetState(FarmState.Sapling);
+                break;
+            // harvest the plant
             case FarmState.Harvestable:
-                return () => { SetState(FarmState.Empty); };
+                SetState(FarmState.Empty);
+                break;
         }
-        return null;
+    }
+
+    private void RetriggerColliders()
+    {
+        StartCoroutine(Utils.ColliderOnOff(GetComponent<Collider2D>()));
     }
 }
