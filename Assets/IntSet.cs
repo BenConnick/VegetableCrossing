@@ -6,7 +6,7 @@ public class IntSet<T> : IEnumerable<T>
     private readonly List<T> valueList = new List<T>();
     private readonly List<bool> isSetList = new List<bool>();
 
-    public void Add(int index, T entry)
+    public void Set(int index, T entry)
     {
         if (index < 0)
         {
@@ -45,7 +45,7 @@ public class IntSet<T> : IEnumerable<T>
         return index > 0 && index < valueList.Count && isSetList[index];
     }
 
-    public int GetNextSet(int startingWith)
+    private int GetNext(int startingWith)
     {
         for (int i = startingWith+1; i < isSetList.Count; i++)
         {
@@ -66,12 +66,11 @@ public class IntSet<T> : IEnumerable<T>
 
     private class IntSetEnumerator<T2> : IEnumerator<T2>
     {
-        private int index;
+        private int index = -1;
         private IntSet<T2> reference;
 
         public IntSetEnumerator(IntSet<T2> collection) {
             reference = collection;
-            index = reference.GetNextSet(0);
         }
 
         public T2 Current
@@ -97,13 +96,13 @@ public class IntSet<T> : IEnumerable<T>
 
         public bool MoveNext()
         {
-            index = reference.GetNextSet(index);
+            index = reference.GetNext(index);
             return index >= 0;
         }
 
         public void Reset()
         {
-            index = reference.GetNextSet(0);
+            index = reference.GetNext(-1);
         }
     }
 }

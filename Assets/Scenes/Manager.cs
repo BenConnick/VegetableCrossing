@@ -46,7 +46,7 @@ public static class Manager
             Debug.LogError($"Cannot register plot, a plot with id {plot.Id} is already registered");
             return;
         }
-        farmPlots.Add(plot.Id, plot);
+        farmPlots.Set(plot.Id, plot);
     }
 
     public static void StartGame()
