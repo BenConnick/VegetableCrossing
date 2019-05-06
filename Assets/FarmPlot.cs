@@ -74,6 +74,8 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
             // water the plant
             case FarmState.Seeded:
                 SetState(FarmState.Sapling);
+                // begin growth timer
+                SaveManager.SetFarmDoneTime(Id, DateTime.Now.AddSeconds(2f));
                 break;
             // harvest the plant
             case FarmState.Harvestable:
@@ -85,5 +87,10 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
     private void RetriggerColliders()
     {
         StartCoroutine(Utils.ColliderOnOff(GetComponent<Collider2D>()));
+    }
+
+    public void OnFinishGowing()
+    {
+        SetState(FarmState.Harvestable);
     }
 }

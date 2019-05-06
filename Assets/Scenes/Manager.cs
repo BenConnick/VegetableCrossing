@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using IndieMarc.TopDown;
-
+using System;
 
 public static class Manager
 {
@@ -22,7 +22,14 @@ public static class Manager
         if (Time.frameCount == prevFrame) return;
         prevFrame = Time.frameCount;
 
+        // handle player input
         InputManager.PerFrameUpdate();
+
+        // --- EVERYTHING PAST THIS POINT IS ONLY WHEN THE GAME IS RUNNING ---
+        if (!started) return;
+
+        // handle plants
+        UpdateFarmTimers();
     }
 
     public static List<TopDownCharacter> GetCharacters()
@@ -59,6 +66,7 @@ public static class Manager
 
         SaveManager.Load();
         InitFarms();
+        started = true;
     }
 
     // may want to move this into save manager
@@ -67,6 +75,22 @@ public static class Manager
         foreach (var plot in farmPlots)
         {
             plot.SetState(SaveManager.GetFarmState(plot.Id), SaveManager.GetFarmPlant(plot.Id));
+        }
+    }
+
+    private static void UpdateFarmTimers()
+    {
+        const FarmPlot.FarmState GrowingState = FarmPlot.FarmState.Sapling;
+        DateTime now = DateTime.Now;
+        foreach (var plot in farmPlots)
+        {
+            int id = plot.Id;
+            // if growing and time expired, enter harvestable state
+            if (SaveManager.GetFarmState(id) == GrowingState 
+                && SaveManager.GetFarmDoneTime(id) < now)
+            {
+                plot.OnFinishGowing();
+            }
         }
     }
 }

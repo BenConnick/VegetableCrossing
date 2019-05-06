@@ -12,7 +12,7 @@ public static class SaveManager
 
     private static int[] farms;
     private static int[] farmPlants;
-    private static DateTime[] farmCooldowns;
+    private static DateTime[] farmTimes;
 
     public static FarmPlot.FarmState GetFarmState(int id)
     {
@@ -35,6 +35,16 @@ public static class SaveManager
         farmPlants[id] = (int)plant;
     }
 
+    public static void SetFarmDoneTime(int id, DateTime done)
+    {
+        farmTimes[id] = done;
+    }
+
+    public static DateTime GetFarmDoneTime(int id)
+    {
+        return farmTimes[id];
+    }
+
     public static void ClearSaveData()
     {
         foreach (string key in SaveDataKeys)
@@ -47,7 +57,7 @@ public static class SaveManager
     {
         PlayerPrefs.SetString(FarmsKey, ArrayToCSV(farms));
         PlayerPrefs.SetString(FarmPlantsKey, ArrayToCSV(farmPlants));
-        PlayerPrefs.SetString(FarmEndTimesKey, ArrayToCSV(farmCooldowns));
+        PlayerPrefs.SetString(FarmEndTimesKey, ArrayToCSV(farmTimes));
     }
 
     public static void Load()
@@ -60,7 +70,7 @@ public static class SaveManager
         Debug.Log(PlayerPrefs.GetString(FarmEndTimesKey));
         farms = CSVToIntArray(PlayerPrefs.GetString(FarmsKey));
         farmPlants = CSVToIntArray(PlayerPrefs.GetString(FarmPlantsKey));
-        farmCooldowns = CSVToDateTimeArray(PlayerPrefs.GetString(FarmEndTimesKey));
+        farmTimes = CSVToDateTimeArray(PlayerPrefs.GetString(FarmEndTimesKey));
     }
 
     // int[] to string
