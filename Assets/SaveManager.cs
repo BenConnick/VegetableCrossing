@@ -10,25 +10,23 @@ public static class SaveManager
     private static float lastChangeTime = 0;
 
     // --- Keys ---
-
     // farm
     private const string FarmsKey = "FarmsKey";
     private const string FarmPlantsKey = "FarmPlantsKey";
     private const string FarmEndTimesKey = "FarmEndTimesKey";
-
     // inventory
     private const string InventoryItemTypesKey = "InventoryItemTypesKey";
     private const string InventoryItemQuantitiesKey = "InventoryItemQuantitiesKey";
 
-    // PlayerPref keys
+    // --- Arrays ---
+
+    // int
     private static readonly string[] IntDataKeys = new[] { FarmsKey, FarmPlantsKey, InventoryItemTypesKey, InventoryItemQuantitiesKey }; // must match Category
-    private static readonly string[] DateTimeDataKeys = new[] { FarmEndTimesKey }; // must match Category
-
-    // --- Memory Representations ---
-
-    // arrays
     private static readonly int[] IntDataArrayLengths = new[] { Manager.MAX_FARMS, Manager.MAX_FARMS, InventoryManager.MAX_INV_SLOTS, InventoryManager.MAX_INV_SLOTS }; // must match Category
     private static readonly int[][] IntDataArrays = new int[4][]; // must match Category
+
+    // date
+    private static readonly string[] DateTimeDataKeys = new[] { FarmEndTimesKey }; // must match Category
     private static readonly int[] DateTimeDataArrayLengths = new[] { Manager.MAX_FARMS }; // must match Category
     private static readonly DateTime[][] DateTimeDataArrays = new DateTime[1][]; // must match Category
 
@@ -36,7 +34,19 @@ public static class SaveManager
 
     private static int[] GetIntArrFromCategory(Category category)
     {
-        return IntDataArrays[(int)category];
+        // TODO dictionary
+        switch(category)
+        {
+            case Category.Farms:
+                return IntDataArrays[0];
+            case Category.FarmPlants:
+                return IntDataArrays[1];
+            case Category.InventoryItemTypes:
+                return IntDataArrays[2];
+            case Category.InventoryItemQuantities:
+                return IntDataArrays[3];
+        }
+        throw new Exception("no category!");
     }
     
     public static int GetInt(Category category, int entry)

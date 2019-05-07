@@ -26,6 +26,11 @@ public static class InventoryManager
         }
         return cachedInventory;
     }
+
+    public static void AddItem(ItemType item, int quantity)
+    {
+
+    }
 }
 
 public struct InventoryItem
