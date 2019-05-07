@@ -102,6 +102,7 @@ public static class InputManager
     public static void PerFrameUpdate()
     {
         AssignControllers();
+        CheckInventoryButton();
     }
 
     /// Assume controllers may have been disconnected
@@ -142,5 +143,20 @@ public static class InputManager
             }
         }
 #endif
+    }
+
+    private static void CheckInventoryButton()
+    {
+        if (Input.GetKeyUp(KeyCode.I))
+        {
+            if (ScreenManager.HasScreen<InventoryScreen>())
+            {
+                ScreenManager.PopScreen();
+            }
+            else
+            {
+                ScreenManager.PushScreen<InventoryScreen>();
+            }
+        }
     }
 }

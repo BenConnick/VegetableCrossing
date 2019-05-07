@@ -21,25 +21,16 @@ public static class SaveManager
     private const string InventoryItemQuantitiesKey = "InventoryItemQuantitiesKey";
 
     // PlayerPref keys
-    private static readonly string[] IntDataKeys = new[] { FarmsKey, FarmPlantsKey, InventoryItemTypesKey, InventoryItemQuantitiesKey }; // must match
-    private static readonly string[] DateTimeDataKeys = new[] { FarmEndTimesKey }; // must match
+    private static readonly string[] IntDataKeys = new[] { FarmsKey, FarmPlantsKey, InventoryItemTypesKey, InventoryItemQuantitiesKey }; // must match Category
+    private static readonly string[] DateTimeDataKeys = new[] { FarmEndTimesKey }; // must match Category
 
     // --- Memory Representations ---
 
-    // farm stuff
-    private static int[] farms;
-    private static int[] farmPlants;
-    private static DateTime[] farmTimes;
-
-    // player stuff
-    private static int[] inventoryItemTypes;
-    private static int[] inventoryItemQuantities;
-
     // arrays
-    private static readonly int[] IntDataArrayLengths = new[] { Manager.MAX_FARMS, Manager.MAX_FARMS, InventoryManager.MAX_INV_SLOTS, InventoryManager.MAX_INV_SLOTS }; // must match
-    private static readonly int[][] IntDataArrays = new[] { farms, farmPlants, inventoryItemTypes, inventoryItemQuantities }; // must match
-    private static readonly int[] DateTimeDataArrayLengths = new[] { Manager.MAX_FARMS }; // must match
-    private static readonly DateTime[][] DateTimeDataArrays = new[] { farmTimes }; // must match
+    private static readonly int[] IntDataArrayLengths = new[] { Manager.MAX_FARMS, Manager.MAX_FARMS, InventoryManager.MAX_INV_SLOTS, InventoryManager.MAX_INV_SLOTS }; // must match Category
+    private static readonly int[][] IntDataArrays = new int[4][]; // must match Category
+    private static readonly int[] DateTimeDataArrayLengths = new[] { Manager.MAX_FARMS }; // must match Category
+    private static readonly DateTime[][] DateTimeDataArrays = new DateTime[1][]; // must match Category
 
     // --- Setters and Getters ---
 
@@ -76,23 +67,23 @@ public static class SaveManager
 
     public static FarmPlot.FarmState GetFarmState(int id)
     {
-        return (FarmPlot.FarmState)farms[id];
+        return (FarmPlot.FarmState)GetInt(Category.Farms, id);
     }
 
     public static void SetFarmState(int id, FarmPlot.FarmState state)
     {
-        farms[id] = (int)state;
+        SetInt(Category.Farms, id, (int)state);
         lastChangeTime = Time.time;
     }
 
     public static FarmPlot.PlantType GetFarmPlant(int id)
     {
-        return (FarmPlot.PlantType)farmPlants[id];
+        return (FarmPlot.PlantType)GetInt(Category.FarmPlants, id);
     }
 
     public static void SetFarmPlant(int id, FarmPlot.PlantType plant)
     {
-        farmPlants[id] = (int)plant;
+        SetInt(Category.FarmPlants, id, (int)plant);
         lastChangeTime = Time.time;
     }
 

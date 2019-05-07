@@ -31,4 +31,16 @@ public static class ScreenManager
         T prefab = (T)field.GetValue(AssetManager.Inst.ScreenPrefabs);
         return Object.Instantiate(prefab);  
     }
+
+    public static bool HasScreen<T>()
+    {
+        foreach (var item in ScreenStack)
+        {
+            if (item is T)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
