@@ -89,13 +89,13 @@ public static class SaveManager
 
     public static void SetFarmDoneTime(int id, DateTime done)
     {
-        farmTimes[id] = done;
+        DateTimeDataArrays[0][id] = done; // TODO make setter like int arr
         lastChangeTime = Time.time;
     }
 
     public static DateTime GetFarmDoneTime(int id)
     {
-        return farmTimes[id];
+        return DateTimeDataArrays[0][id];// TODO make getter like int arr
     }
 
     // --- Manager Functions ---

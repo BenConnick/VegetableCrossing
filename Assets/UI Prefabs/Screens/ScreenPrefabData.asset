@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartScreen: {fileID: 7798210960229087158, guid: 8ec0e5c931ea1f942ab258c7f7efa995,
     type: 3}
+  InventoryScreen: {fileID: 4413991819328235346, guid: 91a5df1660ee5724cb326f93e6c36c3f,
+    type: 3}

@@ -4,4 +4,5 @@
 public class ScreenPrefabData : ScriptableObject
 {
     public StartScreen StartScreen;
+    public InventoryScreen InventoryScreen;
 }
