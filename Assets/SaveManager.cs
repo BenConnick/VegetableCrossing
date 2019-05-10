@@ -61,7 +61,7 @@ public static class SaveManager
         return arr[entry];
     }
 
-    public static void SetInt(Category category, int entry, int value)
+    public static void SetInt(Category category, int entry, int value, bool autosave=true)
     {
         int[] arr = GetIntArrFromCategory(category);
         // bounds check
@@ -73,6 +73,8 @@ public static class SaveManager
         // set
         arr[entry] = value;
         lastChangeTime = Time.time;
+
+        if (autosave) Save();
     }
 
     public static FarmPlot.FarmState GetFarmState(int id)
@@ -101,6 +103,7 @@ public static class SaveManager
     {
         DateTimeDataArrays[0][id] = done; // TODO make setter like int arr
         lastChangeTime = Time.time;
+        Save();
     }
 
     public static DateTime GetFarmDoneTime(int id)

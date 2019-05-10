@@ -59,10 +59,13 @@ public static class Manager
     public static void ClearProgressAndBeginNewGame()
     {
         SaveManager.ClearSaveData();
-        
         StartGame();
+        InventoryManager.AddItem(ItemType.RabbitSeed, 64);
     }
 
+    /// <summary>
+    /// Initializes the game state, must be called first
+    /// </summary>
     public static void StartGame()
     {
         if (started)

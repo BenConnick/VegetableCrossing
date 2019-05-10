@@ -24,7 +24,6 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         SaveManager.SetFarmState(Id, state);
         SaveManager.SetFarmPlant(Id, plant);
         UpdateSprite();
-        SaveManager.Save();
         RetriggerColliders();
     }
 
@@ -69,7 +68,8 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         {
             // plant a seed
             case FarmState.Empty:
-                SetState(FarmState.Seeded, pc.GetHeldSeed());
+                if (InventoryManager.RemoveItem(ItemType.RabbitSeed, 1))
+                    SetState(FarmState.Seeded, pc.GetHeldSeed());
                 break;
             // water the plant
             case FarmState.Seeded:
@@ -79,7 +79,8 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
                 break;
             // harvest the plant
             case FarmState.Harvestable:
-                SetState(FarmState.Empty);
+                if (InventoryManager.AddItem(ItemType.Rabbit, 1))
+                    SetState(FarmState.Empty);
                 break;
         }
     }
