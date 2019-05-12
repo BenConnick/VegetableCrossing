@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -27,6 +26,11 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         RetriggerColliders();
     }
 
+    public FarmState GetState()
+    {
+        return state;
+    }
+
     void Start()
     {
         Manager.Register(this);
@@ -37,9 +41,24 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
         SR.sprite = Sprites.GetPlotSprite(state, plant);
     }
 
-    public bool IsInteractable()
+    public bool IsInteractable(int playerId)
     {
-        return state != FarmState.Sapling;
+        switch (state)
+        {
+            // plant a seed
+            case FarmState.Empty:
+                return Manager.GetP(playerId).Has<SeedBag>();
+            // water the plant
+            case FarmState.Seeded:
+                return Manager.GetP(playerId).Has<WateringCan>();
+            // growing
+            case FarmState.Sapling:
+                return false; // cannot interrupt
+            // harvest the plant
+            case FarmState.Harvestable:
+                return !Manager.GetP(playerId).Has<ICarryable>(); // nothing held
+        }
+        return false; // default
     }
 
     public string GetTooltipText(int playerId)
@@ -62,8 +81,7 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
 
     public void DoInteraction(int playerId)
     {
-        var chars = Manager.GetCharacters();
-        var pc = chars[playerId];
+        var pc = Manager.GetP(playerId);
         switch (state)
         {
             // plant a seed
@@ -73,9 +91,11 @@ public class FarmPlot : MonoBehaviour, IInteractionTrigger
                 break;
             // water the plant
             case FarmState.Seeded:
-                SetState(FarmState.Sapling);
-                // begin growth timer
-                SaveManager.SetFarmDoneTime(Id, DateTime.Now.AddSeconds(2f));
+                if (pc.Has<WateringCan>()) { 
+                    SetState(FarmState.Sapling);
+                    // begin growth timer
+                    SaveManager.SetFarmDoneTime(Id, DateTime.Now.AddSeconds(2f));
+                }
                 break;
             // harvest the plant
             case FarmState.Harvestable:

@@ -103,6 +103,11 @@ public static class Manager
             }
         }
     }
+
+    public static TopDownCharacter GetP(int playerId)
+    {
+        return characters[playerId];
+    }
 }
 
 public enum ItemType { Default, RabbitSeed, Rabbit }

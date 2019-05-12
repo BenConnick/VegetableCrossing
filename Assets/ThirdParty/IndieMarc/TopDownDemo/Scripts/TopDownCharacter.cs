@@ -1,11 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
-
-/// <summary>
-/// Top down character movement
-/// Author: Indie Marc (Marc-Antoine Desbiens)
-/// Company: Falling Flames Games
-/// </summary>
 
 namespace IndieMarc.TopDown
 {
@@ -28,7 +23,7 @@ namespace IndieMarc.TopDown
         private AutoOrderLayer auto_order;
         private ContactFilter2D contact_filter;
 
-        private CarryItem carry_item;
+        private ICarryable carryItem;
         private Vector2 move;
         private Vector2 move_input;
         private Vector2 lookat = Vector2.zero;
@@ -36,7 +31,8 @@ namespace IndieMarc.TopDown
         private bool disable_controls = false;
 
         private Tooltip tooltip;
-        private IInteractionTrigger currentSelection;
+
+        private readonly List<IInteractionTrigger> triggerQueue = new List<IInteractionTrigger>();
 
         void Awake()
         {
@@ -83,9 +79,12 @@ namespace IndieMarc.TopDown
                 bool released = InputManager.InteractionButtonReleasedThisFrame(player_id);
                 if (released)
                 {
-                    if (currentSelection != null)
+                    if (triggerQueue.Count > 0)
                     {
                         DoInteraction();
+                    } else if (carryItem != null)
+                    {
+                        Drop();
                     }
                 }
             }
@@ -103,8 +102,8 @@ namespace IndieMarc.TopDown
 
         private void DoInteraction()
         {
-            if (currentSelection == null) return;
-            currentSelection.DoInteraction(player_id);
+            if (triggerQueue.Count <= 0) return;
+            triggerQueue[triggerQueue.Count-1].DoInteraction(player_id);
             StartCoroutine(Utils.ColliderOnOff(GetComponent<Collider2D>()));
         }
 
@@ -162,41 +161,84 @@ namespace IndieMarc.TopDown
 
         void OnTriggerEnter2D(Collider2D coll)
         {
-            var plot = coll.GetComponent<IInteractionTrigger>();            
-            if (plot != null && plot.IsInteractable())
+            var trigger = coll.GetComponent<IInteractionTrigger>();            
+            if (trigger != null && trigger.IsInteractable(player_id) && !triggerQueue.Contains(trigger))
             {
-                EnterInteractable(plot, coll.transform);
+                // Enter Interactiable
+                triggerQueue.Add(trigger);
+                ChangeSelection(trigger);
+
             }
         }
 
         private void OnTriggerExit2D(Collider2D coll)
         {
-            var plot = coll.GetComponent<IInteractionTrigger>();
-            if (plot != null)
+            var trigger = coll.GetComponent<IInteractionTrigger>();
+            if (trigger != null)
             {
-                ExitInteractable(plot);
+                // Exit Interactable
+                int index = triggerQueue.IndexOf(trigger);
+                if (index < 0) return;
+                triggerQueue.Remove(trigger);
+                if (triggerQueue.Count <= 0)
+                {
+                    ChangeSelection(null);
+                }
+                else
+                {
+                    ChangeSelection(triggerQueue[triggerQueue.Count-1]);
+                }
+                
             }
         }
 
-        private void EnterInteractable(IInteractionTrigger trigger, Transform target)
+        private void ChangeSelection(IInteractionTrigger newSelection)
         {
-            if (trigger == currentSelection || !trigger.IsInteractable()) return;
-            currentSelection = trigger;
-            Tooltip prev = tooltip;
-            tooltip = HUD.ShowTooltip(trigger.GetTooltipText(player_id), target);
-            if (prev != null) prev.Hide();
-        }
-
-        private void ExitInteractable(IInteractionTrigger trigger)
-        {
-            if (currentSelection != trigger) return;
-            if (tooltip != null) tooltip.Hide();
-            currentSelection = null;
+            if (newSelection == null)
+            {
+                // hide
+                if (tooltip != null) tooltip.Hide();
+            }
+            else
+            {
+                // show
+                Tooltip prev = tooltip;
+                tooltip = HUD.ShowTooltip(newSelection.GetTooltipText(player_id), newSelection.transform);
+                if (prev != null) prev.Hide();
+            }
         }
 
         public FarmPlot.PlantType GetHeldSeed()
         {
             return FarmPlot.PlantType.Rabbit;
+        }
+
+        public bool PickUp(ICarryable carryable)
+        {
+            if (carryItem != null) return false;
+            carryable.transform.SetParent(hold_hand.transform, true);
+            carryable.transform.localPosition = Vector3.zero;
+            carryable.transform.localRotation = Quaternion.identity;
+            carryItem = carryable;
+            animator.SetBool("Hold", true);
+            return true;
+        }
+
+        public bool Drop()
+        {
+            if (carryItem == null) return false;
+            carryItem.transform.SetParent(transform.parent, true);
+            carryItem.transform.localPosition += Vector3.down * transform.localScale.y;
+            carryItem.transform.localRotation = Quaternion.identity;
+            carryItem = null;
+            animator.SetBool("Hold", false);
+            return true;
+        }
+
+        public bool Has<T>() where T : ICarryable
+        {
+            if (carryItem == null) return false;
+            return carryItem is T;
         }
 
         /// --------- STATIC UTILITIES --------------

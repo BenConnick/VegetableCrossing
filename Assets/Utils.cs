@@ -74,5 +74,6 @@ public interface IInteractionTrigger
 {
     string GetTooltipText(int playerId);
     void DoInteraction(int playerId);
-    bool IsInteractable();
+    bool IsInteractable(int playerId);
+    Transform transform { get; }
 }
