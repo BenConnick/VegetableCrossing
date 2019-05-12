@@ -4585,10 +4585,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2589200441753108987, guid: d06cfd19977ff2140b8f268d07b9e38a,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.080711566
+      objectReference: {fileID: 0}
+    - target: {fileID: 2589200441753108987, guid: d06cfd19977ff2140b8f268d07b9e38a,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.080711566
+      objectReference: {fileID: 0}
     - target: {fileID: 2381422472322458073, guid: d06cfd19977ff2140b8f268d07b9e38a,
         type: 3}
       propertyPath: m_SortingOrder
       value: -109
+      objectReference: {fileID: 0}
+    - target: {fileID: 2381422472322458073, guid: d06cfd19977ff2140b8f268d07b9e38a,
+        type: 3}
+      propertyPath: m_DrawMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6106803014956184518, guid: d06cfd19977ff2140b8f268d07b9e38a,
         type: 3}
